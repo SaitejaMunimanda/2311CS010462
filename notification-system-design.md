@@ -325,3 +325,56 @@ The index makes searching faster.
 
 ---
 
+
+# Stage 4 – System Design
+
+## System Overview
+
+This notification system has three main parts:
+
+- React Frontend
+- Spring Boot Backend
+- MySQL Database
+
+The frontend sends a request to the backend. The backend gets the required data from the database and sends it back to the frontend.
+
+---
+
+## Working Flow
+
+Student
+
+↓
+
+React Frontend
+
+↓
+
+Spring Boot Backend
+
+↓
+
+MySql Database
+
+↓
+
+Response to Student
+
+---
+
+
+
+
+## Error Handling
+
+The application should return proper status codes.
+
+- 200 – Success
+- 201 – Created
+- 400 – Bad Request
+- 401 – Unauthorized
+- 404 – Not Found
+- 500 – Internal Server Error
+
+---
+
