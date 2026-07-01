@@ -260,5 +260,68 @@ DELETE FROM notifications
 WHERE notification_id = ?;
 ```
 
+
+
+
+# Stage 3 – Query Optimization
+
+## Problem
+
+When the number of notifications becomes very large, fetching notifications for a student can take more time.
+
+For example:
+
+```sql
+SELECT *
+FROM notifications
+WHERE student_id = ?
+ORDER BY created_at DESC;
+```
+
+---
+
+## Why is this query slow
+
+This query may become slow because:
+
+The database has to check many records.
+There is no index on the `student_id` column.
+Sorting all records takes extra time.
+
+
+## Solution
+
+We can create an index on the columns that are used frequently.
+
+```sql
+CREATE INDEX idx_student_created
+ON notifications(student_id, created_at);
+```
+
+This helps the database find records much faster.
+
+---
+
+## Better Query
+
+```sql
+SELECT notification_id,
+       notification_type,
+       message,
+       created_at
+FROM notifications
+WHERE student_id = ?
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+---
+
+## Why is this query better?
+
+It fetches only the required columns.
+It returns only 20 records at a time.
+The index makes searching faster.
+
 ---
 
