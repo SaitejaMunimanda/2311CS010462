@@ -104,5 +104,161 @@ Accept : application/json
 |404|Requested resource not found|
 |500|Internal server error|
 
+
+
+
+# Stage 2 – Database Design
+
+## Database Selection
+
+For this notification system, I would use **PostgreSQL** because it is reliable, supports ACID transactions, and performs well for applications that require structured data. Since notifications have relationships with students, a relational database is a suitable choice.
+
+PostgreSQL also provides indexing, partitioning, and replication features that help the application scale as the number of users and notifications increases.
+
+---
+
+## Database Tables
+
+The system consists of two main tables:
+
+### 1. Students
+
+This table stores the details of every student.
+
+| Column | Data Type | Description |
+|---------|-----------|-------------|
+| student_id | UUID | Primary Key |
+| name | VARCHAR(100) | Student Name |
+| email | VARCHAR(100) | Student Email |
+
+---
+
+### 2. Notifications
+
+This table stores all notifications sent to students.
+
+| Column | Data Type | Description |
+|---------|-----------|-------------|
+| notification_id | UUID | Primary Key |
+| student_id | UUID | Foreign Key referencing Students |
+| notification_type | VARCHAR(20) | Placement, Result or Event |
+| message | TEXT | Notification Content |
+| is_read | BOOLEAN | Indicates whether the notification has been viewed |
+| created_at | TIMESTAMP | Notification creation time |
+
+---
+
+## Relationship
+
+A single student can receive multiple notifications.
+
+```
+Student
+   │
+   │ 1
+   │
+   ▼
+Notifications
+   *
+```
+
+This represents a **One-to-Many** relationship.
+
+## SQL Table Creation
+
+### Students Table
+
+```sql
+CREATE TABLE students (
+    student_id UUID PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
+);
+```
+
+### Notifications Table
+
+```sql
+CREATE TABLE notifications (
+    notification_id UUID PRIMARY KEY,
+    student_id UUID NOT NULL,
+    notification_type VARCHAR(20) NOT NULL,
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id)
+        REFERENCES students(student_id)
+);
+```
+
+
+```sql
+CREATE INDEX idx_student_id
+ON notifications(student_id);
+
+CREATE INDEX idx_notification_type
+ON notifications(notification_type);
+
+CREATE INDEX idx_created_at
+ON notifications(created_at);
+
+CREATE INDEX idx_is_read
+ON notifications(is_read);
+```
+
+
+## Sample SQL Queries
+
+### Get All Notifications of a Student
+
+```sql
+SELECT *
+FROM notifications
+WHERE student_id = ?
+ORDER BY created_at DESC;
+```
+
+---
+
+### Get Only Unread Notifications
+
+```sql
+SELECT *
+FROM notifications
+WHERE student_id = ?
+AND is_read = FALSE
+ORDER BY created_at DESC;
+```
+
+---
+
+### Get Placement Notifications
+
+```sql
+SELECT *
+FROM notifications
+WHERE notification_type = 'Placement'
+ORDER BY created_at DESC;
+```
+
+---
+
+### Mark Notification as Read
+
+```sql
+UPDATE notifications
+SET is_read = TRUE
+WHERE notification_id = ?;
+```
+
+---
+
+### Delete a Notification
+
+```sql
+DELETE FROM notifications
+WHERE notification_id = ?;
+```
+
 ---
 
