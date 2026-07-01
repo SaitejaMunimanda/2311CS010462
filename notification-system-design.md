@@ -378,3 +378,96 @@ The application should return proper status codes.
 
 ---
 
+# Stage 5 – Improving Notification Delivery
+
+## Current Problem
+
+If the system sends notifications one by one to every student, it will take more time when there are many students.
+
+
+Send notification
+
+↓
+
+Student 1
+
+↓
+
+Student 2
+
+↓
+
+Student 3
+
+↓
+
+...
+```
+
+This method becomes slow when thousands of students receive notifications.
+
+---
+
+## Better Solution
+
+Instead of sending notifications directly, I will use a queue.
+
+The backend first stores the notification in the queue.
+
+Workers read the queue and send notifications to students.
+
+```
+Admin
+
+↓
+
+Backend
+
+↓
+
+Queue
+
+↓
+
+Worker
+
+↓
+
+Students
+```
+
+# Stage 6 – Notification Priority
+
+## Priority
+
+I will give priority to notifications based on their importance.
+
+| Notification Type | Priority |
+|-------------------|----------|
+| Placement | 3 |
+| Result | 2 |
+| Event | 1 |
+
+---
+
+## Steps
+
+1. Check the notification type.
+2. Give a priority value.
+3. Sort notifications by priority.
+4. If two notifications have the same priority, show the latest notification first.
+5. Display only the first 10 notifications.
+
+
+---
+
+## Explanation
+
+- Placement notifications are shown first.
+- Result notifications are shown next.
+- Event notifications are shown last.
+- If two notifications have the same priority, the newest notification is displayed first.
+- Only the top 10 notifications are returned.
+
+---
+
