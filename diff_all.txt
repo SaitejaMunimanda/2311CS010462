@@ -1,0 +1,8 @@
+﻿M	.vscode/settings.json
+M	notification-app-be/README.md
+A	notification-app-fe/package-lock.json
+M	notification-app-fe/src/App.jsx
+A	notification-app-fe/src/components/NotificationCard.jsx
+M	notification-app-fe/src/hooks/useNotifications.js
+A	notification-app-fe/src/index.css
+M	notification-system-design.md
